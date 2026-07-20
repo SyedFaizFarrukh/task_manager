@@ -2,12 +2,14 @@ from fastapi import FastAPI
 from app.database import Base, engine
 from app.models import task 
 from app.routers.tasks import router as tasks_router 
+from app.routers.projects import router as projects_router
 
 Base.metadata.create_all(bind = engine)
 
 app = FastAPI(title = "Task Manager System")
 
-app.include_router(tasks_router) 
+app.include_router(tasks_router)
+app.include_router(projects_router) 
 
 @app.get("/")
 def root():

@@ -10,12 +10,14 @@ class TaskStatus(str, Enum):
 class TaskCreate(BaseModel):
     title: str = Field(min_length = 1, max_length = 100)
     description: str | None = None
-    status: TaskStatus = TaskStatus.pending 
+    status: TaskStatus = TaskStatus.pending
+    project_id: int 
 
 class TaskUpdate(BaseModel):
     title: str = Field(min_length = 1, max_length = 100)
     description: str | None = None
-    status: TaskStatus 
+    status: TaskStatus
+    project_id: int 
 
 class TaskResponse(BaseModel):
     id: int 
