@@ -1,10 +1,12 @@
 from datetime import datetime
-from sqlalchemy import Integer, String, DateTime, Text
+from sqlalchemy import Integer, String, DateTime, Text, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database import Base
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from app.models.task import Task
+if TYPE_CHECKING:
+    from app.models.user import User
 
 class Project(Base):
     __tablename__ = "projects"
@@ -36,8 +38,17 @@ class Project(Base):
         onupdate=datetime.utcnow
     )
 
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id"),
+        nullable=False
+    )
+
     tasks: Mapped[list["Task"]] = relationship(
         "Task",
         back_populates="project"
     )
 
+    user: Mapped["User"] = relationship(
+        back_populates="projects"
+    )
+    

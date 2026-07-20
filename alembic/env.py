@@ -6,6 +6,7 @@ from sqlalchemy import pool
 from app.database import Base 
 from app.models.task import Task
 from app.models.project import Project
+from app.models.user import User
 from alembic import context
 
 load_dotenv()
