@@ -59,7 +59,12 @@ def delete_project(project_id: int, db: Session = Depends(get_db)):
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Project not found"
         )
-    project_service.delete_project(db, project)
+    deleted = project_service.delete_project(db, project)
+    if not deleted:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot delete project that contains tasks."
+        )
 
 @router.get(
     "/{project_id}/tasks",

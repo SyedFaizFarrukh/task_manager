@@ -37,8 +37,13 @@ def update_project(db: Session, project: Project, project_data: ProjectUpdate):
 
 
 def delete_project(db: Session, project: Project):
+
+    if project.tasks:
+        return False
     db.delete(project)
     db.commit()
+    return True
+
 
 def get_project_tasks(db: Session, project_id: int):
     project = db.get(Project, project_id)
