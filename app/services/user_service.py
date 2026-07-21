@@ -24,3 +24,12 @@ def create_user(db: Session, user_data: UserCreate):
     db.refresh(user)
     return user
 
+def authenticate_user(db: Session, email: str, password: str):
+    user = get_user_by_email(db, email) 
+    if user is None:
+        return None
+    if not password_hash.verify(password, user.hashed_password):
+        return None
+    return user
+
+
