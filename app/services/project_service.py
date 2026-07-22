@@ -2,12 +2,13 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 from app.models.project import Project
 from app.schemas.project import ProjectCreate, ProjectUpdate
+from app.models.user import User
 
-
-def create_project(db: Session, project_data: ProjectCreate):
+def create_project(db: Session, project_data: ProjectCreate, current_user: User):
     project = Project(
         name=project_data.name,
-        description=project_data.description
+        description=project_data.description,
+        user_id = current_user.id
     )
 
     db.add(project)
@@ -16,12 +17,12 @@ def create_project(db: Session, project_data: ProjectCreate):
     return project
 
 
-def get_all_projects(db: Session):
-    return db.execute(select(Project)).scalars().all()
+def get_all_projects(db: Session, current_user: User):
+    return db.execute(select(Project).where(Project.user_id == current_user.id)).scalars().all()
 
 
-def get_project_by_id(db: Session, project_id: int):
-    return db.get(Project, project_id)
+def get_project_by_id(db: Session, project_id: int, current_user: User):
+    return db.execute(select(Project).where(Project.id == project_id, Project.user_id == current_user.id)).scalar_one_or_none()
 
 
 def update_project(db: Session, project: Project, project_data: ProjectUpdate):
@@ -45,8 +46,8 @@ def delete_project(db: Session, project: Project):
     return True
 
 
-def get_project_tasks(db: Session, project_id: int):
-    project = db.get(Project, project_id)
+def get_project_tasks(db: Session, project_id: int, current_user: User):
+    project = get_project_by_id(db, project_id, current_user)
 
     if project is None:
         return None
