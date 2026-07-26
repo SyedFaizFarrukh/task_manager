@@ -2,7 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 from app.models.project import Project
 from app.schemas.project import ProjectCreate, ProjectUpdate
-from app.models.user import User
+from app.models.user import User, UserRole
 
 def create_project(db: Session, project_data: ProjectCreate, current_user: User):
     project = Project(
@@ -18,11 +18,25 @@ def create_project(db: Session, project_data: ProjectCreate, current_user: User)
 
 
 def get_all_projects(db: Session, current_user: User):
-    return db.execute(select(Project).where(Project.user_id == current_user.id)).scalars().all()
+    if current_user.role == UserRole.ADMIN:
+        return db.execute(select(Project)).scalars().all()
 
+    elif current_user.role == UserRole.MANAGER:
+        return db.execute(select(Project).where(Project.user_id == current_user.id)).scalars().all()
 
-def get_project_by_id(db: Session, project_id: int, current_user: User):
-    return db.execute(select(Project).where(Project.id == project_id, Project.user_id == current_user.id)).scalar_one_or_none()
+    elif current_user.role == UserRole.EMPLOYEE:
+        return []
+
+def get_project_by_id(db: Session, project_id: int, current_user: User) -> Project | None:
+
+    if current_user.role == UserRole.ADMIN:
+        return db.get(Project, project_id)
+    
+    elif current_user.role == UserRole.MANAGER:
+        return db.execute(select(Project).where(Project.id == project_id, Project.user_id == current_user.id)).scalar_one_or_none()
+    
+    elif current_user.role == UserRole.EMPLOYEE:
+        return None
 
 
 def update_project(db: Session, project: Project, project_data: ProjectUpdate):
