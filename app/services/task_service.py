@@ -9,7 +9,7 @@ from app.services import project_service
 
 def create_task(db: Session, task_data: TaskCreate, current_user: User):
 
-    project = project_service.get_project_by_id(db, task_data.project_id, current_user)
+    project = db.get(Project, task_data.project_id)
     if project is None:
         return None
 
