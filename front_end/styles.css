@@ -1,0 +1,31 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
+.title {
+    color: blue;
+}
+
+input {
+    width: 300px;
+    padding: 10px;
+    margin: 10px;
+}
+
+.login-btn {
+    width: 150px;
+    padding: 10px;
+    background-color: green;
+    color: white;
+    margin-top: 15px;
+}
