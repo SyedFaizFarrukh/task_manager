@@ -55,6 +55,31 @@ def get_all_tasks(db: Session, current_user: User):
     elif current_user.role == UserRole.EMPLOYEE:
         return db.execute(select(Task).where(Task.assignee_id == current_user.id)).scalars().all()
 
+def get_tasks_by_project(db: Session, project_id: int, current_user: User):
+    if current_user.role == UserRole.ADMIN:
+        return db.execute(
+            select(Task).where(Task.project_id == project_id)
+        ).scalars().all()
+
+    elif current_user.role == UserRole.MANAGER:
+        return db.execute(
+            select(Task)
+            .join(Project)
+            .where(
+                Project.user_id == current_user.id,
+                Task.project_id == project_id
+            )
+        ).scalars().all()
+
+    elif current_user.role == UserRole.EMPLOYEE:
+        return db.execute(
+            select(Task)
+            .where(
+                Task.assignee_id == current_user.id,
+                Task.project_id == project_id
+            )
+        ).scalars().all()
+
 def get_task_by_id(db: Session, task_id: int, current_user: User):
 
     if current_user.role == UserRole.ADMIN:

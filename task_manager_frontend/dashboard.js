@@ -47,11 +47,41 @@ async function loadProjects() {
 }
 
 async function loadTasks(projectId) {
+    try {
+        const response = await fetch(
+            `http://127.0.0.1:8000/tasks/project/${projectId}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+        if (!response.ok) {
+            console.log(await response.json());
+            return;
+        }
 
-    console.log("Loading tasks for project:", projectId);
+        const tasks = await response.json();
+        let taskList = document.getElementById("taskList");
+        taskList.innerHTML = "";
+        tasks.forEach(function(task) {
+            let li = document.createElement("li");
+            li.textContent = `${task.title} (${task.status})`;
+            taskList.appendChild(li);
+});
 
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 loadUser();
 
 loadProjects();
+
+document.getElementById("logoutBtn").addEventListener("click", logout);
+
+function logout() {
+    localStorage.removeItem("token");
+    window.location.href = "index.html";
+}

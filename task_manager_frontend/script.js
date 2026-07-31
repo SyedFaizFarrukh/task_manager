@@ -19,6 +19,12 @@ form.addEventListener("submit", async function (event) {
     }
     );
 
+    if (!response.ok) {
+    const error = await response.json();
+    alert(error.detail);
+    return;
+}
+
     const data = await response.json();
     localStorage.setItem("token", data.access_token);
     console.log("Token Saved");
@@ -34,8 +40,13 @@ form.addEventListener("submit", async function (event) {
     }
 );
 
-        const meData = await meResponse.json();
-        window.location.href = "dashboard.html";
+        if (!meResponse.ok) {
+    alert("Unable to fetch user information.");
+    return;
+}
+
+    const meData = await meResponse.json();
+    window.location.href = "dashboard.html";
         
     } catch(error) {
         console.log(error);
