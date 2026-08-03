@@ -29,23 +29,6 @@ form.addEventListener("submit", async function (event) {
     localStorage.setItem("token", data.access_token);
     console.log("Token Saved");
 
-    const token = localStorage.getItem("token");
-    const meResponse = await fetch(
-    "http://127.0.0.1:8000/auth/me",
-    {
-        method: "GET",
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    }
-);
-
-        if (!meResponse.ok) {
-    alert("Unable to fetch user information.");
-    return;
-}
-
-    const meData = await meResponse.json();
     window.location.href = "dashboard.html";
         
     } catch(error) {
