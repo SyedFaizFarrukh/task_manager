@@ -1,15 +1,18 @@
 import apiRequest from "../api/apiRequest";
 
 async function login(email, password) {
+    const formData = new URLSearchParams();
+
+    formData.append("username", email);
+    formData.append("password", password);
 
     return apiRequest("/auth/login", {
         method: "POST",
-        body: JSON.stringify({
-            email,
-            password,
-        }),
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: formData,
     });
-
 }
 
 async function register(name, email, password) {

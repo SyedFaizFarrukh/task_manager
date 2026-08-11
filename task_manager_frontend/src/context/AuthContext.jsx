@@ -2,7 +2,7 @@ import {
     login as loginService,
     getCurrentUser,
 } from "../services/authService";
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 
 const AuthContext = createContext();
 function AuthProvider({ children }) {
@@ -41,7 +41,7 @@ useEffect(() => {
     loadUser();
 }, []);
     function logout() {
-        localStorage.removeItem("access_Token");
+        localStorage.removeItem("access_token");
         setUser(null);
     }
     const value = {
