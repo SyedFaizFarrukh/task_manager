@@ -4,7 +4,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 class TaskStatus(str, Enum):
     pending = "pending"
-    in_progress = "in_progess"
+    in_progress = "in_progress"
     completed = "completed"
 
 class TaskCreate(BaseModel):

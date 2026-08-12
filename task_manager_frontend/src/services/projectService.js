@@ -39,7 +39,7 @@ async function deleteProject(projectId) {
 }
 
 async function getProjectTasks(projectId) {
-    return apiRequest(`/projects/${projectId}/tasks`, {
+    return apiRequest(`/tasks/project/${projectId}`, {
         method: "GET",
     });
 }
