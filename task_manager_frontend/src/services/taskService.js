@@ -30,7 +30,8 @@ async function updateTask(
     title,
     description,
     status,
-    projectId
+    projectId,
+    assigneeId
 ) {
     return apiRequest(`/tasks/${taskId}`, {
         method: "PUT",
@@ -39,6 +40,7 @@ async function updateTask(
             description,
             status,
             project_id: projectId,
+            assignee_id: assigneeId
         }),
     });
 }

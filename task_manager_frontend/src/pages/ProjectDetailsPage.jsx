@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { getProject, getProjectTasks } from "../services/projectService";
-import { createTask } from "../services/taskService";
+import { getProject, getProjectTasks, updateProject } from "../services/projectService";
+import { createTask, updateTask, deleteTask } from "../services/taskService";
 import { getUsers } from "../services/userService";
 
 function ProjectDetailsPage() {
@@ -12,6 +12,7 @@ function ProjectDetailsPage() {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [status, setStatus] = useState("pending");
+    const [editingTaskId, setEditingTaskId] = useState(null);
     const [users, setUsers] = useState([]);
     const [assigneeId, setAssigneeId] = useState("");
     const [loading, setLoading] = useState(true);
@@ -94,7 +95,7 @@ function ProjectDetailsPage() {
                 </select>
 
                 <button type="submit">
-                Create Task
+                    {editingTaskId===null ? "Create Task" : "Update Task"}
                 </button>
             </form>
 
@@ -107,6 +108,24 @@ function ProjectDetailsPage() {
                     <strong>{task.title}</strong>
                     <p>{task.description}</p>
                     <p>Status: {task.status}</p>
+                    <button 
+                        type="button"
+                        onClick={() => { 
+                            setEditingTaskId(task.id);
+                            setTitle(task.title);
+                            setDescription(task.description || "");
+                            setStatus(task.status);
+                            setAssigneeId(task.assignee_id);
+                        }}
+                    > 
+                        Edit 
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => handleDeleteTask(task.id)}
+                        >
+                            Delete
+                        </button>
                     </li>
             ))}
                 </ul>
@@ -119,6 +138,7 @@ function ProjectDetailsPage() {
     setError("");
 
     try {
+        if (editingTaskId===null) {
         const newTask = await createTask(
             title,
             description,
@@ -128,17 +148,49 @@ function ProjectDetailsPage() {
         );
 
         setTasks((currentTasks) => [
-            ...currentTasks,
             newTask,
+            ...currentTasks,
         ]);
+    } else {
+        const updatedTask = await updateTask(
+            editingTaskId,
+            title,
+            description,
+            status,
+            projectId,
+            assigneeId
+        );
 
+        setTasks((currentTasks) => 
+            currentTasks.map((task) => 
+                task.id === editingTaskId
+                    ? updatedTask
+                    : task
+                )
+            );
+    }
         setTitle("");
         setDescription("");
         setStatus("pending");
+        setAssigneeId("");
+        setEditingTaskId(null);
+    } catch (error) {
+        setError(error.message);
+    }
+}
+
+async function handleDeleteTask(taskId) {
+    setError("");
+
+    try {
+        await deleteTask(taskId);
+
+        setTasks((currentTasks) =>
+            currentTasks.filter((task) => task.id !== taskId)
+        );
     } catch (error) {
         setError(error.message);
     }
 }
 }
-
 export default ProjectDetailsPage;
