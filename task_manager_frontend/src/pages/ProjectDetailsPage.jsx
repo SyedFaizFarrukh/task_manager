@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import { getProject, getProjectTasks, updateProject } from "../services/projectService";
+import { Link, useParams, useNavigate } from "react-router-dom";
+import { getProject, getProjectTasks, updateProject, deleteProject } from "../services/projectService";
 import { createTask, updateTask, deleteTask } from "../services/taskService";
 import { getUsers } from "../services/userService";
+import { useAuth } from "../hooks/useAuth";
 
 function ProjectDetailsPage() {
     const { projectId } = useParams();
+    const navigate = useNavigate();
+    const { user } = useAuth();
 
     const [project, setProject] = useState(null);
     const [tasks, setTasks] = useState([]);
@@ -13,6 +16,9 @@ function ProjectDetailsPage() {
     const [description, setDescription] = useState("");
     const [status, setStatus] = useState("pending");
     const [editingTaskId, setEditingTaskId] = useState(null);
+    const [projectName, setProjectName] = useState("");
+    const [projectDescription, setProjectDescription] = useState("");
+    const [editingProject, setEditingProject] = useState(false);
     const [users, setUsers] = useState([]);
     const [assigneeId, setAssigneeId] = useState("");
     const [loading, setLoading] = useState(true);
@@ -28,6 +34,8 @@ function ProjectDetailsPage() {
             setProject(projectData);
             setTasks(taskData);
             setUsers(userData);
+            setProjectName(projectData.name);
+            setProjectDescription(projectData.description || "");
         } catch (error) {
             setError(error.message);
         } finally {
@@ -56,6 +64,51 @@ function ProjectDetailsPage() {
 
             <p>{project.description}</p>
 
+            {(user.role === "admin" || user.role === "manager") && (
+                <button
+                    type="button"
+                    onClick={() => setEditingProject(true)}
+                >
+                Edit Project
+                </button>
+            )}
+
+            {(user.role === "admin" || user.role === "manager") && (
+                <button
+                    type="button"
+                    onClick={() => handleDeleteProject(projectId)}
+                >
+                Delete Project
+                </button>
+            )}
+                 
+            {editingProject && (
+                <form onSubmit={handleUpdateProject}>
+                    <input
+                    type="text"
+                    value={projectName}
+                    onChange={(event) => setProjectName(event.target.value)}
+                    />
+
+                <textarea
+                    value={projectDescription}
+                    onChange={(event) =>
+                    setProjectDescription(event.target.value)
+                    }
+                />
+
+                <button type="submit">
+                Update Project
+                </button>
+
+                <button
+                type="button"
+                onClick={() => setEditingProject(false)}
+                >
+                Cancel
+                </button>
+            </form>
+)}
             <h2>Tasks</h2>
 
             <form onSubmit={handleCreateTask}>
@@ -188,6 +241,35 @@ async function handleDeleteTask(taskId) {
         setTasks((currentTasks) =>
             currentTasks.filter((task) => task.id !== taskId)
         );
+    } catch (error) {
+        setError(error.message);
+    }
+}
+
+async function handleUpdateProject(event) {
+    event.preventDefault();
+    setError("");
+
+    try {
+        const updatedProject = await updateProject(
+            projectId,
+            projectName,
+            projectDescription
+        );
+
+        setProject(updatedProject);
+        setEditingProject(false);
+    } catch (error) {
+        setError(error.message);
+    }
+}
+
+async function handleDeleteProject(projectId) {
+    setError("");
+
+    try {
+        await deleteProject(projectId);
+        navigate("/projects");
     } catch (error) {
         setError(error.message);
     }
