@@ -6,6 +6,7 @@ import ProjectsPage from "../pages/ProjectsPage";
 import ProjectDetailsPage from "../pages/ProjectDetailsPage";
 import NotFoundPage from "../pages/NotFoundPage";
 import ProtectedRoute from "../components/common/ProtectedRoute";
+import TasksPage from "../pages/TasksPage";
 
 function AppRoutes() {
     return (
@@ -29,6 +30,15 @@ function AppRoutes() {
                 element={
                     <ProtectedRoute>
                         <ProjectsPage />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/tasks"
+                element={
+                    <ProtectedRoute>
+                    <TasksPage />
                     </ProtectedRoute>
                 }
             />

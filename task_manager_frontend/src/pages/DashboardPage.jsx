@@ -1,9 +1,17 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { useEffect } from "react";
 
 function DashboardPage() {
+
     const { user, logout } = useAuth();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (user?.role === "employee") {
+            navigate("/tasks", { replace: true });
+        }
+    }, [user, navigate]);
 
     function handleLogout() {
         logout();
