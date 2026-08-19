@@ -93,7 +93,7 @@ def get_task_by_id(db: Session, task_id: int, current_user: User):
 
 def update_task(db: Session, task: Task, task_data: TaskUpdate, current_user: User):
 
-    project = project_service.get_project_by_id(db, task_data.project_id, current_user)
+    project = db.get(Project, task_data.project_id)
     if project is None:
         return None
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getTasks } from "../services/taskService";
+import { getTasks, updateTask } from "../services/taskService";
 import { useAuth } from "../hooks/useAuth";
 import { Link } from "react-router-dom";
 
@@ -9,6 +9,7 @@ function TasksPage() {
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [savingTaskId, setSavingTaskId] = useState(null);
 
     useEffect(() => {
         async function loadTasks() {
@@ -24,6 +25,34 @@ function TasksPage() {
 
         loadTasks();
     }, []);
+
+    async function handleStatusChange(taskId, newStatus) {
+    setError("");
+    setSavingTaskId(taskId);
+
+    try {
+        const task = tasks.find((task) => task.id === taskId);
+
+        const updatedTask = await updateTask(
+            taskId,
+            task.title,
+            task.description,
+            newStatus,
+            task.project_id,
+            task.assignee_id
+        );
+
+        setTasks((currentTasks) =>
+            currentTasks.map((task) =>
+                task.id === taskId ? updatedTask : task
+            )
+        );
+    } catch (error) {
+        setError(error.message);
+    } finally {
+        setSavingTaskId(null);
+    }
+}
 
     if (loading) {
         return <p>Loading tasks...</p>;
@@ -47,7 +76,20 @@ function TasksPage() {
                         <li key={task.id}>
                             <strong>{task.title}</strong>
                             <p>{task.description}</p>
-                            <p>Status: {task.status}</p>
+                           <select
+                                value={task.status}
+                                disabled={savingTaskId === task.id}
+                                onChange={(event) =>
+                                handleStatusChange(task.id, event.target.value)
+                                }
+                            >
+                            <option value="pending">Pending</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                            </select>
+                            {savingTaskId === task.id && (
+                                <span> Saving...</span>
+                            )}
                             <p>Assignee ID: {task.assignee_id}</p>
                         </li>
                     ))}
