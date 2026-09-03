@@ -8,7 +8,7 @@ import { useAuth } from "../hooks/useAuth";
 function ProjectDetailsPage() {
     const { projectId } = useParams();
     const navigate = useNavigate();
-    const { user } = useAuth();
+    const { user: currentUser } = useAuth();
 
     const [project, setProject] = useState(null);
     const [tasks, setTasks] = useState([]);
@@ -64,7 +64,7 @@ function ProjectDetailsPage() {
 
             <p>{project.description}</p>
 
-            {(user.role === "admin" || user.role === "manager") && (
+            {(currentUser.role === "admin" || currentUser.role === "manager") && (
                 <button
                     type="button"
                     onClick={() => setEditingProject(true)}
@@ -73,7 +73,7 @@ function ProjectDetailsPage() {
                 </button>
             )}
 
-            {(user.role === "admin" || user.role === "manager") && (
+            {(currentUser.role === "admin" || currentUser.role === "manager") && (
                 <button
                     type="button"
                     onClick={() => handleDeleteProject(projectId)}
@@ -110,7 +110,7 @@ function ProjectDetailsPage() {
             </form>
 )}
             <h2>Tasks</h2>
-
+{(currentUser.role === "admin" || currentUser.role === "manager") && (
             <form onSubmit={handleCreateTask}>
                 <input
                 type="text"
@@ -140,18 +140,21 @@ function ProjectDetailsPage() {
 >
                     <option value="">Select Assignee</option>
 
-                    {users.map((user) => (
-                    <option key={user.id} value={user.id}>
-                    {user.name}
-                    </option>
-            ))}
+                    {users.filter((user) =>
+                        currentUser.role === "admin" ||
+                        (currentUser.role === "manager" && user.role === "employee")
+                    ).map((user) => (
+                        <option key={user.id} value={user.id}>
+                            {user.name}
+                        </option>
+                    ))} 
                 </select>
 
                 <button type="submit">
                     {editingTaskId===null ? "Create Task" : "Update Task"}
                 </button>
             </form>
-
+)}
             {tasks.length === 0 ? (
                 <p>No tasks found.</p>
             ) : (
@@ -189,6 +192,16 @@ function ProjectDetailsPage() {
     async function handleCreateTask(event) {
     event.preventDefault();
     setError("");
+
+    if (!title.trim()) {
+        setError("Task title is required.");
+        return;
+    }
+
+    if (!assigneeId) {
+        setError("Please select an assignee.");
+        return;
+    }
 
     try {
         if (editingTaskId===null) {
@@ -249,6 +262,11 @@ async function handleDeleteTask(taskId) {
 async function handleUpdateProject(event) {
     event.preventDefault();
     setError("");
+
+    if (!projectName.trim()) {
+        setError("Project name is required.");
+        return;
+    }
 
     try {
         const updatedProject = await updateProject(

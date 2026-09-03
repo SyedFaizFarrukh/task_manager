@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { getTasks, updateTask } from "../services/taskService";
 import { useAuth } from "../hooks/useAuth";
-import { Link } from "react-router-dom";
 
 function TasksPage() {
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
+    const navigate = useNavigate();
 
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -25,6 +26,11 @@ function TasksPage() {
 
         loadTasks();
     }, []);
+
+    function handleLogout() {
+    logout();
+    navigate("/login");
+}
 
     async function handleStatusChange(taskId, newStatus) {
     setError("");
@@ -68,6 +74,10 @@ function TasksPage() {
 
             <h2>Welcome, {user.name}</h2>
 
+            <button onClick={handleLogout}>
+                Logout
+            </button>
+
             {tasks.length === 0 ? (
                 <p>No tasks found.</p>
             ) : (
@@ -96,9 +106,6 @@ function TasksPage() {
                 </ul>
             )}
 
-            <Link to="/dashboard">
-                Dashboard
-            </Link>
         </div>
     );
 }

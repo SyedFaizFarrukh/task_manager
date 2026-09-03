@@ -1,8 +1,8 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 
-function ProtectedRoute({ children }) {
-    const { isAuthenticated, authLoading } = useAuth();
+function ProtectedRoute({ children, allowedRoles }) {
+    const { user, isAuthenticated, authLoading } = useAuth();
 
     if (authLoading) {
         return <div>Loading...</div>;
@@ -10,6 +10,10 @@ function ProtectedRoute({ children }) {
 
     if (!isAuthenticated) {
         return <Navigate to="/login" replace />;
+    }
+
+    if (allowedRoles && !allowedRoles.includes(user.role)) {
+        return <Navigate to="/tasks" replace />;
     }
 
     return children;

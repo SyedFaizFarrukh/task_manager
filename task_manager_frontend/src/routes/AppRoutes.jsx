@@ -19,7 +19,7 @@ function AppRoutes() {
             <Route
                 path="/dashboard"
                 element={
-                    <ProtectedRoute>
+                    <ProtectedRoute allowedRoles={["admin", "manager"]}>
                         <DashboardPage />
                     </ProtectedRoute>
                 }
@@ -28,7 +28,7 @@ function AppRoutes() {
             <Route
                 path="/projects"
                 element={
-                    <ProtectedRoute>
+                    <ProtectedRoute allowedRoles={["admin", "manager"]}>
                         <ProjectsPage />
                     </ProtectedRoute>
                 }
@@ -37,8 +37,8 @@ function AppRoutes() {
             <Route
                 path="/tasks"
                 element={
-                    <ProtectedRoute>
-                    <TasksPage />
+                    <ProtectedRoute allowedRoles={["admin", "manager", "employee"]}>
+                        <TasksPage />
                     </ProtectedRoute>
                 }
             />
@@ -46,7 +46,7 @@ function AppRoutes() {
             <Route
                 path="/projects/:projectId"
                 element={
-                    <ProtectedRoute>
+                    <ProtectedRoute allowedRoles={["admin", "manager"]}>
                         <ProjectDetailsPage />
                     </ProtectedRoute>
                 }

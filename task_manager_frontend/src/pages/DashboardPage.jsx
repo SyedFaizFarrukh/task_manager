@@ -1,40 +1,51 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { useEffect } from "react";
 
 function DashboardPage() {
 
-    const { user, logout } = useAuth();
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        if (user?.role === "employee") {
-            navigate("/tasks", { replace: true });
-        }
-    }, [user, navigate]);
-
-    function handleLogout() {
-        logout();
-        navigate("/login");
-    }
+    const { user } = useAuth();
 
     return (
-        <div>
-            <h1>Dashboard</h1>
+        <div className="page-container">
 
-            <h2>Welcome, {user.name}</h2>
+            <div className="dashboard-header">
+                <h1>Dashboard</h1>
+                <p>
+                    Welcome back, {user.name}. Here's an overview of your
+                    task management workspace.
+                </p>
+            </div>
 
-            <p>Email: {user.email}</p>
+            <div className="dashboard-cards">
 
-            <Link to="/projects">
-                Projects
-            </Link>
+                <div className="dashboard-card">
+                    <h3>Projects</h3>
+                    <p>Manage your projects and their tasks.</p>
 
-            <br />
+                    <Link to="/projects" className="dashboard-card-link">
+                        View Projects →
+                    </Link>
+                </div>
 
-            <button onClick={handleLogout}>
-                Logout
-            </button>
+                <div className="dashboard-card">
+                    <h3>Tasks</h3>
+                    <p>View and manage your assigned tasks.</p>
+
+                    <Link to="/tasks" className="dashboard-card-link">
+                        View Tasks →
+                    </Link>
+                </div>
+
+                <div className="dashboard-card">
+                    <h3>Your Account</h3>
+                    <p>{user.email}</p>
+                    <span className="role-badge">
+                        {user.role}
+                    </span>
+                </div>
+
+            </div>
+
         </div>
     );
 }

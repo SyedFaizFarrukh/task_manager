@@ -34,6 +34,7 @@ function RegisterPage() {
                     placeholder="Name"
                     value={name}
                     onChange={(event) => setName(event.target.value)}
+                    required
                 />
 
                 <input
@@ -41,6 +42,7 @@ function RegisterPage() {
                     placeholder="Email"
                     value={email}
                     onChange={(event) => setEmail(event.target.value)}
+                    required
                 />
 
                 <input
@@ -48,6 +50,7 @@ function RegisterPage() {
                     placeholder="Password"
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}
+                    required
                 />
 
                 <button type="submit">Register</button>

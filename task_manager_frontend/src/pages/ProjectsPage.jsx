@@ -9,9 +9,14 @@ function ProjectsPage() {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
 
-    async function handleCreateProject(event) {
+   async function handleCreateProject(event) {
     event.preventDefault();
     setError("");
+
+    if (!name.trim()) {
+        setError("Project name is required.");
+        return;
+    }
 
     try {
         const newProject = await createProject(name, description);

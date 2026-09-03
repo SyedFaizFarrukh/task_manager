@@ -21,18 +21,19 @@ def create_task(db: Session, task_data: TaskCreate, current_user: User):
     )
     if current_user.role == UserRole.ADMIN:
         pass
+
     elif current_user.role == UserRole.MANAGER:
         if assignee.role != UserRole.EMPLOYEE:
             raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Managers can only assign tasks to employees."
         )
+
     elif current_user.role == UserRole.EMPLOYEE:
-        if assignee.id != current_user.id:
-            raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Employees can only create tasks for themselves."
-        )
+        raise HTTPException(
+        status_code=status.HTTP_403_FORBIDDEN,
+        detail="Employees cannot create tasks."
+    )
     task = Task(
         title = task_data.title,
         description = task_data.description, 
@@ -115,7 +116,7 @@ def update_task(db: Session, task: Task, task_data: TaskUpdate, current_user: Us
         if assignee.id != current_user.id:
             raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Employees can only assign tasks to themselves."
+            detail="Employees cannot assign tasks to other users."
         )
 
     task.title = task_data.title
