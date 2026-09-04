@@ -1,5 +1,9 @@
 @import url("./navbar.css");
 @import url("./dashboard.css");
+@import url("./projects.css");
+@import url("./projectDetails.css");
+@import url("./tasks.css");
+@import url("./auth.css");
 
 * {
     box-sizing: border-box;
@@ -164,5 +168,35 @@ button.danger:hover {
     text-align: center;
     padding: 40px;
     color: #6b7280;
+}
+
+.not-found-card {
+    background-color: #ffffff;
+    max-width: 600px;
+    margin: 80px auto;
+    padding: 50px 30px;
+    border-radius: 14px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+    text-align: center;
+}
+
+.not-found-card h1 {
+    font-size: 64px;
+    margin-bottom: 5px;
+    color: #2563eb;
+}
+
+.not-found-card h2 {
+    margin-bottom: 10px;
+}
+
+.not-found-card p {
+    color: #6b7280;
+    margin-bottom: 25px;
+}
+
+.not-found-link {
+    font-size: 14px;
+    font-weight: 600;
 }
 

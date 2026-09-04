@@ -9,29 +9,29 @@ function ProjectsPage() {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
 
-   async function handleCreateProject(event) {
-    event.preventDefault();
-    setError("");
+    async function handleCreateProject(event) {
+        event.preventDefault();
+        setError("");
 
-    if (!name.trim()) {
-        setError("Project name is required.");
-        return;
+        if (!name.trim()) {
+            setError("Project name is required.");
+            return;
+        }
+
+        try {
+            const newProject = await createProject(name, description);
+
+            setProjects((currentProjects) => [
+                ...currentProjects,
+                newProject,
+            ]);
+
+            setName("");
+            setDescription("");
+        } catch (error) {
+            setError(error.message);
+        }
     }
-
-    try {
-        const newProject = await createProject(name, description);
-
-        setProjects((currentProjects) => [
-            ...currentProjects,
-            newProject,
-        ]);
-
-        setName("");
-        setDescription("");
-    } catch (error) {
-        setError(error.message);
-    }
-}
 
     useEffect(() => {
         async function loadProjects() {
@@ -49,53 +49,100 @@ function ProjectsPage() {
     }, []);
 
     if (loading) {
-        return <p>Loading projects...</p>;
+        return (
+            <div className="page-container">
+                <p className="loading">Loading projects...</p>
+            </div>
+        );
     }
 
     if (error) {
-        return <p>{error}</p>;
+        return (
+            <div className="page-container">
+                <p className="error-message">{error}</p>
+            </div>
+        );
     }
 
     return (
-        <div>
-            <h1>Projects</h1>
+        <div className="page-container">
 
-            <form onSubmit={handleCreateProject}>
-    <input
-        type="text"
-        placeholder="Project name"
-        value={name}
-        onChange={(event) => setName(event.target.value)}
-    />
+            <div className="projects-header">
+                <div>
+                    <h1>Projects</h1>
+                    <p>Manage your projects and their tasks.</p>
+                </div>
 
-    <textarea
-        placeholder="Project description"
-        value={description}
-        onChange={(event) => setDescription(event.target.value)}
-    />
+                <Link to="/dashboard" className="back-link">
+                    ← Back to Dashboard
+                </Link>
+            </div>
 
-    <button type="submit">
-        Create Project
-    </button>
-            </form>
+            <div className="create-project-card">
+                <h2>Create a New Project</h2>
+                <p className="form-description">
+                    Add a new project to your workspace.
+                </p>
 
-            <Link to="/dashboard">
-                Back to Dashboard
-            </Link>
+                <form onSubmit={handleCreateProject}>
+                    <label>Project Name</label>
 
-            {projects.length === 0 ? (
-                <p>No projects found.</p>
-            ) : (
-                <ul>
-                    {projects.map((project) => (
-                        <li key={project.id}>
-                            <Link to={`/projects/${project.id}`}>
-                                {project.name}
-                            </Link>
-                        </li>
-                    ))}
-                </ul>
-            )}
+                    <input
+                        type="text"
+                        placeholder="Enter project name"
+                        value={name}
+                        onChange={(event) => setName(event.target.value)}
+                    />
+
+                    <label>Project Description</label>
+
+                    <textarea
+                        placeholder="Enter project description"
+                        value={description}
+                        onChange={(event) =>
+                            setDescription(event.target.value)
+                        }
+                    />
+
+                    <button type="submit">
+                        Create Project
+                    </button>
+                </form>
+            </div>
+
+            <div className="projects-section">
+                <h2>Your Projects</h2>
+
+                {projects.length === 0 ? (
+                    <div className="empty-state">
+                        <p>No projects found.</p>
+                        <p>Create your first project above to get started.</p>
+                    </div>
+                ) : (
+                    <div className="projects-grid">
+                        {projects.map((project) => (
+                            <div className="project-card" key={project.id}>
+
+                                <h3>{project.name}</h3>
+
+                                <p>
+                                    {project.description ||
+                                        "No description provided."}
+                                </p>
+
+                                <Link
+                                    to={`/projects/${project.id}`}
+                                    className="project-card-link"
+                                >
+                                    View Project →
+                                </Link>
+
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+
         </div>
     );
 }

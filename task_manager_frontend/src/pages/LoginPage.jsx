@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
 function LoginPage() {
@@ -25,38 +25,71 @@ function LoginPage() {
     }
 
     return (
-        <div>
-            <h1>Login</h1>
+        <div className="auth-page">
 
-            {error && <p>{error}</p>}
+            <div className="auth-card">
 
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Email</label>
-
-                    <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                    />
+                <div className="auth-header">
+                    <h1>Task Manager</h1>
+                    <p>Sign in to your account</p>
                 </div>
 
-                <div>
-                    <label>Password</label>
+                {error && (
+                    <p className="error-message">
+                        {error}
+                    </p>
+                )}
 
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
+                <form onSubmit={handleSubmit}>
+
+                    <div className="form-group">
+                        <label>Email</label>
+
+                        <input
+                            type="email"
+                            placeholder="Enter your email"
+                            value={email}
+                            onChange={(e) =>
+                                setEmail(e.target.value)
+                            }
+                            required
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <label>Password</label>
+
+                        <input
+                            type="password"
+                            placeholder="Enter your password"
+                            value={password}
+                            onChange={(e) =>
+                                setPassword(e.target.value)
+                            }
+                            required
+                        />
+                    </div>
+
+                    <button
+                        type="submit"
+                        className="auth-button"
+                    >
+                        Login
+                    </button>
+
+                </form>
+
+                <div className="auth-footer">
+                    <p>
+                        Don't have an account?{" "}
+                        <Link to="/register">
+                            Register
+                        </Link>
+                    </p>
                 </div>
 
-                <button type="submit">
-                    Login
-                </button>
-            </form>
+            </div>
+
         </div>
     );
 }

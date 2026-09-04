@@ -51,7 +51,7 @@ def get_all_tasks(db: Session, current_user: User):
         return db.execute(select(Task)).scalars().all()
 
     elif current_user.role == UserRole.MANAGER:
-        return db.execute(select(Task).join(Project).where(Project.user_id == current_user.id)).scalars().all()
+        return db.execute(select(Task).join(Project).where((Project.user_id == current_user.id)|(Task.assignee_id == current_user.id))).scalars().all()
 
     elif current_user.role == UserRole.EMPLOYEE:
         return db.execute(select(Task).where(Task.assignee_id == current_user.id)).scalars().all()
