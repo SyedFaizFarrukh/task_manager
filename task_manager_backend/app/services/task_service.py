@@ -120,7 +120,6 @@ def update_task(db: Session, task: Task, task_data: TaskUpdate, current_user: Us
     )
     if current_user.role == UserRole.ADMIN:
         pass
-    
     elif current_user.role == UserRole.MANAGER:
         if assignee.role != UserRole.EMPLOYEE and assignee.id != current_user.id:
             raise HTTPException(
