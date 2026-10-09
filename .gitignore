@@ -1,0 +1,28 @@
+﻿# Python environments and generated files
+**/venv/
+**/venv_old/
+**/__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Environment secrets
+.env
+.env.*
+!.env.example
+
+# Frontend dependencies and build output
+**/node_modules/
+**/dist/
+**/dist-ssr/
+
+# Editor and operating-system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Archived, obsolete Alembic migrations
+task_manager_backend/alembic/old_versions/
+task_manager_backend/alembic/versions_backup/

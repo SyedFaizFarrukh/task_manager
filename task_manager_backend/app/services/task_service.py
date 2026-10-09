@@ -81,16 +81,30 @@ def get_tasks_by_project(db: Session, project_id: int, current_user: User):
             )
         ).scalars().all()
 
+
 def get_task_by_id(db: Session, task_id: int, current_user: User):
 
     if current_user.role == UserRole.ADMIN:
         return db.get(Task, task_id)
 
     elif current_user.role == UserRole.MANAGER:
-        return db.execute(select(Task).join(Project).where(Task.id == task_id, Project.user_id == current_user.id)).scalar_one_or_none()
+        return db.execute(
+            select(Task)
+            .join(Project)
+            .where(
+                Task.id == task_id,
+                (Project.user_id == current_user.id) |
+                (Task.assignee_id == current_user.id)
+            )
+        ).scalar_one_or_none()
 
     elif current_user.role == UserRole.EMPLOYEE:
-        return db.execute(select(Task).where(Task.id == task_id,Task.assignee_id == current_user.id)).scalar_one_or_none()
+        return db.execute(
+            select(Task).where(
+                Task.id == task_id,
+                Task.assignee_id == current_user.id
+            )
+        ).scalar_one_or_none()
 
 def update_task(db: Session, task: Task, task_data: TaskUpdate, current_user: User):
 
@@ -106,8 +120,9 @@ def update_task(db: Session, task: Task, task_data: TaskUpdate, current_user: Us
     )
     if current_user.role == UserRole.ADMIN:
         pass
+    
     elif current_user.role == UserRole.MANAGER:
-        if assignee.role != UserRole.EMPLOYEE:
+        if assignee.role != UserRole.EMPLOYEE and assignee.id != current_user.id:
             raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Managers can only assign tasks to employees."
